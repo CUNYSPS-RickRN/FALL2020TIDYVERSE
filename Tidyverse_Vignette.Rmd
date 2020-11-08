@@ -161,9 +161,54 @@ Reading from connection or link:
 read_csv("https://raw.githubusercontent.com/fivethirtyeight/data/master/congress-generic-ballot/generic_topline_historical.csv")
 ```
 
+
 Reading from raw data: 
 
 ```{r eval = FALSE, results='asis'}
 read_csv("dem_estimate,rep_estimate\n50.00,50.31\n55.37,43.63", col_types = list(col_double(), col_character()))
+```
+
+## EXTENDING with spec_csv
+
+Extending the previous examples of using read_csv, one can use the tidyverse "spec_csv" to generate a column specification. It has the same arguments as read_csv.  Furthermore, the value returned from spec_csv can be saved to a variable for further manipulation.
+
+In the first example, this .csv has a header row and will be used for column names.  
+In the second example on the same .csv, spec_csv will  skip 500 lines before reading then use line 501 for column names.  
+In the third example, the column names have been supplied in the spec_csv statement.
+
+-RickRN
+
+
+```{r, echo=TRUE, results='asis', eval=TRUE}
+var_spec_a <- spec_csv("https://raw.githubusercontent.com/fivethirtyeight/data/master/congress-generic-ballot/generic_topline_historical.csv")
+
+var_spec_s <- spec_csv("https://raw.githubusercontent.com/fivethirtyeight/data/master/congress-generic-ballot/generic_topline_historical.csv", skip = 500)
+
+var_spec_b <- spec_csv("dem_estimate,rep_estimate\n50.00,50.31\n55.37,43.63", col_types = list(col_double(), col_character()))
+
+```
+
+var_spec_a, var_spec_s, & var_spec_b both contain a list of 3 items - cols, default, and skip.  One might be reading in multiple csv files (ie. daily, weekly,etc) from an website where the number of columns have changed over time. Interrogating the length of cols can help identify the problem.  One can also interrogate the number of lines skipped too.
+
+-RickRN
+
+```{r eval = TRUE}
+names(var_spec_a)
+var_spec_a
+var_spec_a$skip
+var_spec_a$default
+
+names(var_spec_s)
+var_spec_s
+var_spec_s$skip
+var_spec_s$default
+
+
+
+names(var_spec_b)
+var_spec_b
+
+length(var_spec_a$cols)
+length(var_spec_b$cols)
 ```
 
